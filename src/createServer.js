@@ -44,6 +44,22 @@ function createServer() {
     return res.json(user);
   });
 
+  app.patch('/users/:id', (req, res) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    const user = users.find((u) => u.id === Number(id));
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (name) {
+      user.name = name;
+    }
+
+    return res.json(user);
+  });
+
   return app;
 }
 
