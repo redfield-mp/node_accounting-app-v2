@@ -29,6 +29,10 @@ function createServer() {
     return res.status(201).json(newUser);
   });
 
+  app.get('/users', (req, res) => {
+    return res.json(users);
+  });
+
   return app;
 }
 
