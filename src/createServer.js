@@ -60,6 +60,19 @@ function createServer() {
     return res.json(user);
   });
 
+  app.delete('/users/:id', (req, res) => {
+    const { id } = req.params;
+    const index = users.findIndex((u) => u.id === Number(id));
+
+    if (index === -1) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    users.splice(index, 1);
+
+    return res.sendStatus(204);
+  });
+
   return app;
 }
 
