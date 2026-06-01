@@ -98,6 +98,36 @@ function createServer() {
     return res.status(201).json(expense);
   });
 
+  app.get('/expenses', (req, res) => {
+    const { userId, from, to, categories } = req.query;
+
+    const fromDate = from ? new Date(from) : null;
+    const toDate = to ? new Date(to) : null;
+    const categorySet = categories ? new Set(categories.split(',')) : null;
+
+    const filteredExpenses = expenses.filter((expense) => {
+      if (userId && expense.userId !== Number(userId)) {
+        return false;
+      }
+
+      if (fromDate && new Date(expense.spentAt) < fromDate) {
+        return false;
+      }
+
+      if (toDate && new Date(expense.spentAt) > toDate) {
+        return false;
+      }
+
+      if (categorySet && !categorySet.has(expense.category)) {
+        return false;
+      }
+
+      return true;
+    });
+
+    return res.json(filteredExpenses);
+  });
+
   return app;
 }
 
