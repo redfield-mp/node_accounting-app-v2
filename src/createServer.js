@@ -8,7 +8,9 @@ function createServer() {
   // Return the server (express app)
   const app = express();
   const users = [];
-  let nextId = 1;
+  const expenses = [];
+  let nextUserId = 1;
+  let nextExpenseId = 1;
 
   app.use(express.json());
 
@@ -20,7 +22,7 @@ function createServer() {
     }
 
     const newUser = {
-      id: nextId++,
+      id: nextUserId++,
       name,
     };
 
@@ -35,7 +37,7 @@ function createServer() {
 
   app.get('/users/:id', (req, res) => {
     const { id } = req.params;
-    const user = users.find((currentUser) => currentUser.id === Number(id));
+    const user = users.find((u) => u.id === Number(id));
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -71,6 +73,29 @@ function createServer() {
     users.splice(index, 1);
 
     return res.sendStatus(204);
+  });
+
+  app.post('/expenses', (req, res) => {
+    const { userId, spentAt, title, amount, category, note } = req.body;
+    const user = users.find((u) => u.id === userId);
+
+    if (!user) {
+      return res.status(400).json({ error: 'User not found' });
+    }
+
+    const expense = {
+      id: nextExpenseId++,
+      userId,
+      spentAt,
+      title,
+      amount,
+      category,
+      note,
+    };
+
+    expenses.push(expense);
+
+    return res.status(201).json(expense);
   });
 
   return app;
