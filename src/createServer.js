@@ -77,6 +77,11 @@ function createServer() {
 
   app.post('/expenses', (req, res) => {
     const { userId, spentAt, title, amount, category, note } = req.body;
+
+    if (!spentAt || !title || !amount || !category) {
+      return res.status(400).json({ error: 'Required fields are missing' });
+    }
+
     const user = users.find((u) => u.id === userId);
 
     if (!user) {
