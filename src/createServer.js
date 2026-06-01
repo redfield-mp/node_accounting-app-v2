@@ -128,6 +128,66 @@ function createServer() {
     return res.json(filteredExpenses);
   });
 
+  app.get('/expenses/:id', (req, res) => {
+    const { id } = req.params;
+    const expenseId = Number(id);
+    const expense = expenses.find((e) => e.id === expenseId);
+
+    if (!expense) {
+      return res.status(404).json({ error: 'Expense not found' });
+    }
+
+    return res.json(expense);
+  });
+
+  app.patch('/expenses/:id', (req, res) => {
+    const { id } = req.params;
+    const expenseId = Number(id);
+    const expense = expenses.find((e) => e.id === expenseId);
+
+    if (!expense) {
+      return res.status(404).json({ error: 'Expense not found' });
+    }
+
+    const { spentAt, title, amount, category, note } = req.body;
+
+    if (spentAt !== undefined) {
+      expense.spentAt = spentAt;
+    }
+
+    if (title !== undefined) {
+      expense.title = title;
+    }
+
+    if (amount !== undefined) {
+      expense.amount = amount;
+    }
+
+    if (category !== undefined) {
+      expense.category = category;
+    }
+
+    if (note !== undefined) {
+      expense.note = note;
+    }
+
+    return res.json(expense);
+  });
+
+  app.delete('/expenses/:id', (req, res) => {
+    const { id } = req.params;
+    const expenseId = Number(id);
+    const index = expenses.findIndex((e) => e.id === expenseId);
+
+    if (index === -1) {
+      return res.status(404).json({ error: 'Expense not found' });
+    }
+
+    expenses.splice(index, 1);
+
+    return res.sendStatus(204);
+  });
+
   return app;
 }
 
